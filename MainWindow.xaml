@@ -1,0 +1,271 @@
+﻿<mah:MetroWindow x:Class="PullTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PullTest"
+        xmlns:local1="clr-namespace:PullTest.Models"
+        xmlns:local2="clr-namespace:PullTest.Converters"
+        mc:Ignorable="d"
+        Title=""  Height="1027" Width="800"
+        WindowState="Maximized"       
+                 >
+    <!--xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"-->
+    <mah:MetroWindow.Resources>
+        <ResourceDictionary>
+            <local2:DoubleToStringConverter x:Key="DoubleToStringConverter"/>
+        </ResourceDictionary>
+    </mah:MetroWindow.Resources>
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Image Source="/Resources/Icons/ll.png" Height="30" Margin="1"/>
+            <Label Content="  "/>
+            <Label Content="拉力测试机程序" VerticalContentAlignment="Center"   VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="25" />
+        </StackPanel>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="6*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="0" MinWidth="150" >
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Vertical">
+                        <Border >
+                            <Label  Content="当前拉力" HorizontalContentAlignment="Center" FontSize="12" FontWeight="Black"/>
+                        </Border>
+                        <Border>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="3*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label x:Name="CurrentPullLabel" Grid.Column="0"  Content="0000"  
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" FontWeight="Black"/>
+                                <Label Grid.Column="1" Content="N"
+                               HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                        <Border>
+                            <Label  Grid.ColumnSpan="2" Content="最大拉力" HorizontalContentAlignment="Center" FontSize="12" FontWeight="Black"/>
+                        </Border>
+                        <Border>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="3*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label x:Name="MaxPullLabel" Grid.Column="0"  Content="0000"  
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" FontWeight="Black"/>
+                                <Label Grid.Column="1" Content="N"
+                                       HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                    <Separator Height="15"/>
+                    <StackPanel Orientation="Vertical">
+                        <Button x:Name="RunButton"
+                            Content="&#xe702; 运行" 
+                                        FontFamily="{StaticResource font}"
+                                        Margin="5" 
+                                Foreground="SeaGreen"
+                                Click="RunButtonClick"
+                                />
+                        <Button x:Name="StopButton" Content="&#xea76; 停止" 
+                                FontFamily="{StaticResource font}"
+                                Margin="5" 
+                                Foreground="Tomato"
+                                Click="StopButtonClick"
+                                />
+                        <Separator Height="15" />
+                        <Button Content="&#xe65d; 向上" 
+                                FontFamily="{StaticResource font}"
+                                Margin="5" 
+                                Click="UpButtonClick"
+                                />
+                        <Button Content="&#xe772; 向下" 
+                                FontFamily="{StaticResource font}"
+                                Margin="5" 
+                                Click="DownButtonClick"
+                                />
+                        <Border>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                <Label Content="点动时长：" Margin="5" FontWeight="Black"/>
+                                <TextBox x:Name="JumpTextBox" Text="3" Width="50" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
+                                <Label Content="秒" Margin="5"/>
+                            </StackPanel>
+                        </Border>
+                        <Border>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                                <Label Content="中断条件：" Margin="5" FontWeight="Black"/>
+                                <TextBox x:Name="SetBreakValueTextBox" Text="100" MinWidth="50" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
+                                <Label Content="N" Margin="5"/>
+                            </StackPanel>
+                        </Border>
+                        <Border>
+                            <Button Content="&#xe643; 设置值" 
+                                      FontFamily="{StaticResource font}" 
+                                    Click="SetButtonClick"
+                                    Margin="5"/>
+                        </Border>
+                    </StackPanel>
+                    <Separator Height="20"/>
+                    <StackPanel Orientation="Vertical" >
+                        <Button Content="&#xea95; 导出-Excel" 
+                                FontFamily="{StaticResource font}"
+                                Margin="5"
+                                Click="ExportToExcelButtonClick"
+                                />
+                        <Button Content="&#xe676; 导出-PDF" 
+                                FontFamily="{StaticResource font}"
+                                Click="ExportToPDFButtonClick"
+                                Margin="5" />
+                        <Button Content="&#xe6ad; 清除数据" 
+                                FontFamily="{StaticResource font}"
+                                Click="Clear_Button_Click"
+                                Margin="5" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <Border x:Name="DrawBorder" Grid.Column="1" Padding="10">
+                <lvc:CartesianChart 
+                    x:Name="Chart"
+                    Margin="15"
+                    FontSize="10"
+                    FontWeight="Bold"
+                    LegendPosition="Top"
+                                    >
+                </lvc:CartesianChart>
+            </Border>
+            <Border Grid.Column="2">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Vertical"  Margin="10">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Label Content="串口号:" Margin="5"/>
+                            <ComboBox  x:Name="PortComboBox" Width="100" Margin="5" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Label Content="波特率:" Margin="5"/>
+                            <ComboBox x:Name="BaudRateComboBox" Width="100" Margin="5">
+                                <ComboBoxItem>9600</ComboBoxItem>
+                                <ComboBoxItem>19200</ComboBoxItem>
+                                <ComboBoxItem>38400</ComboBoxItem>
+                                <ComboBoxItem>115200</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Label Content="数据位:" Margin="5"/>
+                            <ComboBox x:Name="DataBitsComboBox" Width="100" Margin="5">
+                                <ComboBoxItem>7</ComboBoxItem>
+                                <ComboBoxItem>8</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Label Content="校验位:" Margin="5"/>
+                            <ComboBox x:Name="ParityComboBox" Width="100" Margin="5">
+                                <ComboBoxItem>无校验</ComboBoxItem>
+                                <ComboBoxItem>奇校验</ComboBoxItem>
+                                <ComboBoxItem>偶校验</ComboBoxItem>
+                                <ComboBoxItem>1校验</ComboBoxItem>
+                                <ComboBoxItem>0校验</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Label Content="停止位:" Margin="5"/>
+                            <ComboBox x:Name="StopBitsComboBox" Width="100" Margin="5">
+                                <ComboBoxItem>1位</ComboBoxItem>
+                                <ComboBoxItem>1.5位</ComboBoxItem>
+                                <ComboBoxItem>2位</ComboBoxItem>
+                                <ComboBoxItem>None</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                            <Button x:Name="ConnectButton"
+                       Content="&#xe63f; 连接"  
+                       FontFamily="{StaticResource font}" 
+                       Margin="5" Width="150"
+                       Click="ConnectButtonClick"
+                       />
+                        </StackPanel>
+                    </StackPanel>
+                    <Grid  Grid.Row="1" Margin="5">
+                        <Border>
+                            <ListView x:Name="pullListView" SelectionMode="Single"  >
+                                <ListView.ItemTemplate >
+                                    <DataTemplate DataType="local1:Pull">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="3*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" BorderThickness="1">
+                                                <TextBox Text="{Binding CurrentDateTime,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" />
+                                            </Border>
+                                            <Border Grid.Column="1" BorderThickness="1">
+                                                <TextBox Text="{Binding CurrentValue,Converter={StaticResource DoubleToStringConverter }}"/>
+                                            </Border>
+                                            <Border Grid.Column="2" BorderThickness="1">
+                                                <Label Content="N"/>
+                                            </Border>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </Border>
+                    </Grid>
+                    <Border Grid.Row="2">
+                        <Grid Margin="10">
+                            <StackPanel Orientation="Vertical"  HorizontalAlignment="Center">
+                                <Border>
+                                    <StackPanel Orientation="Horizontal" >
+                                        <Label Content="名称：" FontWeight="Black"/>
+                                        <TextBox x:Name="NameTextBox" Text="TPU夹网布" MinWidth="150" ToolTip="输入名称，比如0.6mmPVC夹网布"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border>
+                                    <StackPanel Orientation="Horizontal" >
+                                        <Label Content="描述：" FontWeight="Black"/>
+                                        <TextBox  x:Name="DescriptionTextBox" Text="400D 单面涂胶" MinWidth="150" ToolTip="输入描述，比如单面涂敷TPU胶水"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border>
+                                    <StackPanel Orientation="Horizontal" >
+                                        <Label Content="材质：" FontWeight="Black"/>
+                                        <TextBox x:Name="MaterialTextBox" Text="TPU+高强涤纶基布" MinWidth="150" ToolTip="输入材质，比如PVC"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border>
+                                    <StackPanel Orientation="Horizontal" >
+                                        <Label Content="厚度：" FontWeight="Black"/>
+                                        <TextBox x:Name="ThicknessTextBox" Text="0.35" MinWidth="150" ToolTip="输入厚度，0.6mm"/>
+                                    </StackPanel>
+                                </Border>
+                                <Separator Height="30" />
+                                <Border>
+                                    <StackPanel Orientation="Horizontal" >
+                                        <Label Content="测试人：" FontWeight="Black"/>
+                                        <TextBox x:Name="TestedTextBox" Text="Wzp" MinWidth="150"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+        <Label x:Name="State" Content="" Grid.Row="2"  VerticalAlignment="Center" HorizontalContentAlignment="Center" FontSize="18"  />
+    </Grid>
+</mah:MetroWindow>
